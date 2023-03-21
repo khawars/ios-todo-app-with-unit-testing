@@ -141,48 +141,48 @@ node {
             step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'build/coverage/*.xml', failNoReports: true, failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'UTF_8', zoomCoverageChart: true])
         }
 
-        stage('Save') {
-            dir('build') {
-                // Uncomment this when 
-                // archiveArtifacts artifacts: '*.ipa', fingerprint: true
+        // stage('Save') {
+        //     dir('build') {
+        //         // Uncomment this when 
+        //         // archiveArtifacts artifacts: '*.ipa', fingerprint: true
 
-                // You can archive other files as well
-                // For example, you might have images of build failures from UI tests or KIF
-                // archiveArtifacts artifacts: '*.ipa, UITests/*.png, KIF/*.png', fingerprint: true
+        //         // You can archive other files as well
+        //         // For example, you might have images of build failures from UI tests or KIF
+        //         // archiveArtifacts artifacts: '*.ipa, UITests/*.png, KIF/*.png', fingerprint: true
 
-                // Uncomment below if you want to upload the resulting ipa somewhere
-                // You need to add an SSH key in the Credentials section of Jenkins
-                /*sshagent(['build-results-server']) {
-                    sh 'scp *.ipa jenkins@example.com:~/builds/ios'
-                }*/
-            }
+        //         // Uncomment below if you want to upload the resulting ipa somewhere
+        //         // You need to add an SSH key in the Credentials section of Jenkins
+        //         /*sshagent(['build-results-server']) {
+        //             sh 'scp *.ipa jenkins@example.com:~/builds/ios'
+        //         }*/
+        //     }
 
-            def endTime = System.currentTimeMillis()
-            def durationString = createDurationString(startTime, endTime)
-            def testResults = getTestResult()
-            def testResultString = getTestResultString()
-            def unstableFromTests = testResults && (testResults[1] > 0 || testResults[2] > 0)
+        //     def endTime = System.currentTimeMillis()
+        //     def durationString = createDurationString(startTime, endTime)
+        //     def testResults = getTestResult()
+        //     def testResultString = getTestResultString()
+        //     def unstableFromTests = testResults && (testResults[1] > 0 || testResults[2] > 0)
 
-            if (sendSuccessNotification() || (unstableFromTests && sendUnstableNotification())) {
-                def status = unstableFromTests ? 'Unstable' : 'Success'
-                def color = unstableFromTests ? 'warning' : 'good'
-                def message = slackMessagePrefix() + " ${status} after ${durationString} (<${env.BUILD_URL}|Open>)\n\t${testResultString}"
+        //     if (sendSuccessNotification() || (unstableFromTests && sendUnstableNotification())) {
+        //         def status = unstableFromTests ? 'Unstable' : 'Success'
+        //         def color = unstableFromTests ? 'warning' : 'good'
+        //         def message = slackMessagePrefix() + " ${status} after ${durationString} (<${env.BUILD_URL}|Open>)\n\t${testResultString}"
 
-                if (buildURL) {
-                    message = message + "\n" + buildURL
-                }
+        //         if (buildURL) {
+        //             message = message + "\n" + buildURL
+        //         }
 
-                slackSend channel: slackChannel, color: color, message: message
-            }
-        }
+        //         slackSend channel: slackChannel, color: color, message: message
+        //     }
+        // }
     } catch (e) {
-        def endTime = System.currentTimeMillis()
-        def durationString = createDurationString(startTime, endTime)
-        def testResultString = getTestResultString()
+        // def endTime = System.currentTimeMillis()
+        // def durationString = createDurationString(startTime, endTime)
+        // def testResultString = getTestResultString()
 
-        if (sendFailNotification()) {
-            slackSend channel: slackChannel, color: 'danger', message: slackMessagePrefix() + " Failed after ${durationString} (<${env.BUILD_URL}|Open>)\n\t${testResultString}"
-        }
+        // if (sendFailNotification()) {
+        //     slackSend channel: slackChannel, color: 'danger', message: slackMessagePrefix() + " Failed after ${durationString} (<${env.BUILD_URL}|Open>)\n\t${testResultString}"
+        // }
 
         throw e
     }
